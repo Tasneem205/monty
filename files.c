@@ -32,7 +32,7 @@ void read_file(FILE *fd)
 	len = 0;
 	for (line_num = 1; getline(&buffer, &len, fd) != -1; line_num++)
 	{
-		format = parse_line(buffer, line_number, format);
+		format = parse_line(buffer, line_num, format);
 	}
 	free(buffer);
 }
@@ -50,17 +50,17 @@ int parse_line(char *buff, int line_num, int format)
 	const char *delim;
 
 	delim = "\n";
-	if (buffer == NULL)
+	if (buff == NULL)
 		err(4);
 	opcode = strtok(buff, delim);
 	if (opcode == NULL)
 		return (format);
-	value = strtok(NULL, delim);
+	val = strtok(NULL, delim);
 	if (strcmp(opcode, "stack") == 0)
 		return (0);
 	if (strcmp(opcode, "queue") == 0)
 		return (1);
-	find_func(opcode, value, line_num, format);
+	find_func(opcode, val, line_num, format);
 	return (format);
 }
 
@@ -88,7 +88,7 @@ void find_func(char *opcode, char *value, int line_num, int format)
 		{"sub", sub_nodes},
 		{"div", div_nodes},
 		{"mul", mul_nodes},
-		{"mod", mod_modes},
+		{"mod", mod_nodes},
 		{"pcahr", print_char},
 		{"pstr", print_str},
 		{"rotl", rotl},
