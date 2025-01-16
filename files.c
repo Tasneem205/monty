@@ -2,7 +2,7 @@
 
 /**
  * open_file - opens a file
- * #fn: file name
+ * @fn: file name
  * Return: void
  */
 void open_file(char *fn)
