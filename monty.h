@@ -1,5 +1,5 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef MONTY_H
+#define MONTY_H
 
 #define _GNU_SOURCE
 #include <stdio.h>
@@ -42,14 +42,14 @@ typedef struct instruction_s
 extern stack_t *head;
 typedef void (*op_func)(stack_t **, unsigned int);
 
-/* operations of files */
-void open_file(char *fn);
-int parse_line(char *buff, int line_num, int format);
+/*file operations*/
+void open_file(char *file_name);
+int parse_line(char *buffer, int line_number, int format);
 void read_file(FILE *);
-/* int len_chars(FILE *); */
+int len_chars(FILE *);
 void find_func(char *, char *, int, int);
 
-/* stack operations */
+/*Stack operations*/
 stack_t *create_node(int n);
 void free_nodes(void);
 void print_stack(stack_t **, unsigned int);
@@ -63,14 +63,14 @@ void pop_top(stack_t **, unsigned int);
 void nop(stack_t **, unsigned int);
 void swap_nodes(stack_t **, unsigned int);
 
-/* math operations */
+/*Math operations with nodes*/
 void add_nodes(stack_t **, unsigned int);
 void sub_nodes(stack_t **, unsigned int);
 void div_nodes(stack_t **, unsigned int);
 void mul_nodes(stack_t **, unsigned int);
 void mod_nodes(stack_t **, unsigned int);
 
-/* string operatoins */
+/*String operations*/
 void print_char(stack_t **, unsigned int);
 void print_str(stack_t **, unsigned int);
 void rotl(stack_t **, unsigned int);

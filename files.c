@@ -2,77 +2,84 @@
 
 /**
  * open_file - opens a file
- * @fn: file name
+ * @file_name: the file namepath
  * Return: void
  */
-void open_file(char *fn)
-{
-	FILE *fd = fopen(fn, "r");
 
-	if (fn == NULL || fd == NULL)
-		err(2, fn);
+void open_file(char *file_name)
+{
+	FILE *fd = fopen(file_name, "r");
+
+	if (file_name == NULL || fd == NULL)
+		err(2, file_name);
 
 	read_file(fd);
 	fclose(fd);
 }
 
+
 /**
- * read_file - read the file data
- * @fd: pointer to the file descriptor
+ * read_file - reads a file
+ * @fd: pointer to file descriptor
  * Return: void
  */
+
 void read_file(FILE *fd)
 {
-	int line_num, format;
-	char *buffer;
-	size_t len;
+	int line_number, format = 0;
+	char *buffer = NULL;
+	size_t len = 0;
 
-	format = 0;
-	buffer = NULL;
-	len = 0;
-	for (line_num = 1; getline(&buffer, &len, fd) != -1; line_num++)
+	for (line_number = 1; getline(&buffer, &len, fd) != -1; line_number++)
 	{
-		format = parse_line(buffer, line_num, format);
+		format = parse_line(buffer, line_number, format);
 	}
 	free(buffer);
 }
 
-/**
- * parse_line - reads the line
- * @buff: the buffer
- * @line_num: line number
- * @format: chosen format
- * Return: the format number
- */
-int parse_line(char *buff, int line_num, int format)
-{
-	char *opcode, *val;
-	const char *delim;
 
-	delim = "\n";
-	if (buff == NULL)
+/**
+ * parse_line - Separates each line into tokens to determine
+ * which function to call
+ * @buffer: line from the file
+ * @line_number: line number
+ * @format:  storage format. If 0 Nodes will be entered as a stack.
+ * if 1 nodes will be entered as a queue.
+ * Return: Returns 0 if the opcode is stack. 1 if queue.
+ */
+
+int parse_line(char *buffer, int line_number, int format)
+{
+	char *opcode, *value;
+	const char *delim = "\n ";
+
+	if (buffer == NULL)
 		err(4);
-	opcode = strtok(buff, delim);
+
+	opcode = strtok(buffer, delim);
 	if (opcode == NULL)
 		return (format);
-	val = strtok(NULL, delim);
+	value = strtok(NULL, delim);
+
 	if (strcmp(opcode, "stack") == 0)
 		return (0);
 	if (strcmp(opcode, "queue") == 0)
 		return (1);
-	find_func(opcode, val, line_num, format);
+
+	find_func(opcode, value, line_number, format);
 	return (format);
 }
 
 /**
- * find_func - find suitable function
- * @opcode: operation code
- * @value: value to push for ex
- * @line_num: the line number
- * @format: the format if stack or queue
+ * find_func - find the appropriate function for the opcode
+ * @opcode: opcode
+ * @value: argument of opcode
+ * @format:  storage format. If 0 Nodes will be entered as a stack.
+ * @ln: line number
+ * if 1 nodes will be entered as a queue.
  * Return: void
  */
-void find_func(char *opcode, char *value, int line_num, int format)
+void find_func(char *opcode, char *value, int ln, int format)
 {
 	int i;
 	int flag;
@@ -89,25 +96,28 @@ void find_func(char *opcode, char *value, int line_num, int format)
 		{"div", div_nodes},
 		{"mul", mul_nodes},
 		{"mod", mod_nodes},
-		{"pcahr", print_char},
+		{"pchar", print_char},
 		{"pstr", print_str},
 		{"rotl", rotl},
 		{"rotr", rotr},
 		{NULL, NULL}
 	};
+
 	if (opcode[0] == '#')
 		return;
+
 	for (flag = 1, i = 0; func_list[i].opcode != NULL; i++)
 	{
 		if (strcmp(opcode, func_list[i].opcode) == 0)
 		{
-			call_fun(func_list[i].f, opcode, value, line_num, format);
+			call_fun(func_list[i].f, opcode, value, ln, format);
 			flag = 0;
 		}
 	}
 	if (flag == 1)
-		err(3, line_num, opcode);
+		err(3, ln, opcode);
 }
+
 
 /**
  * call_fun - Calls the required function.
